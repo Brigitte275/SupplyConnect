@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupplyConnect - Connect Suppliers with Buyers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i data-lucide="factory" class="h-8 w-8 text-indigo-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-900">SupplyConnect</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#products" class="text-gray-600 hover:text-indigo-600 font-medium">Products</a>
+                    <a href="#suppliers" class="text-gray-600 hover:text-indigo-600 font-medium">Suppliers</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-indigo-600 font-medium">How it Works</a>
+                    <button onclick="openModal('supplierModal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-medium">
+                        Become a Supplier
+                    </button>
+                    <button onclick="openModal('loginModal')" class="text-gray-600 hover:text-gray-900 font-medium">Login</button>
+                </div>
+
+                <button class="md:hidden flex items-center" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="h-6 w-6 text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <!-- FIX 1: Added missing "How it Works" link to mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#products" class="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium">Products</a>
+                <a href="#suppliers" class="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium">Suppliers</a>
+                <a href="#how-it-works" class="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium">How it Works</a>
+                <button onclick="openModal('supplierModal')" class="block w-full text-left px-3 py-2 text-indigo-600 font-medium">Become a Supplier</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Connect. Source. Grow.</h1>
+            <p class="text-xl md:text-2xl mb-8 text-indigo-100 max-w-3xl mx-auto">
+                The premier B2B marketplace connecting verified suppliers with global buyers. Find quality products or expand your business reach.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="scrollToSection('products')" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition shadow-lg">
+                    Browse Products
+                </button>
+                <button onclick="openModal('supplierModal')" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition">
+                    Start Selling
+                </button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="mt-12 max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-2 flex items-center">
+                <i data-lucide="search" class="h-5 w-5 text-gray-400 ml-3"></i>
+                <input type="text" id="heroSearch" placeholder="Search for products, suppliers, or categories..." 
+                       class="flex-1 px-4 py-3 outline-none text-gray-800" onkeyup="handleSearch(this.value)">
+                <button onclick="performSearch()" class="bg-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:bg-indigo-700 transition">
+                    Search
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-3xl font-bold text-indigo-600">10,000+</div>
+                    <div class="text-gray-600 mt-1">Verified Suppliers</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-indigo-600">50,000+</div>
+                    <div class="text-gray-600 mt-1">Active Buyers</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-indigo-600">100K+</div>
+                    <div class="text-gray-600 mt-1">Products Listed</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-indigo-600">150+</div>
+                    <div class="text-gray-600 mt-1">Countries Served</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Browse by Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div onclick="filterByCategory('electronics')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition">
+                        <i data-lucide="cpu" class="h-8 w-8 text-blue-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Electronics</h3>
+                    <p class="text-sm text-gray-500 mt-1">2,400+ products</p>
+                </div>
+                <div onclick="filterByCategory('textiles')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-pink-200 transition">
+                        <i data-lucide="shirt" class="h-8 w-8 text-pink-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Textiles</h3>
+                    <p class="text-sm text-gray-500 mt-1">1,800+ products</p>
+                </div>
+                <div onclick="filterByCategory('machinery')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition">
+                        <i data-lucide="cog" class="h-8 w-8 text-orange-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Machinery</h3>
+                    <p class="text-sm text-gray-500 mt-1">950+ products</p>
+                </div>
+                <div onclick="filterByCategory('agriculture')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer text-center group">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition">
+                        <i data-lucide="wheat" class="h-8 w-8 text-green-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900">Agriculture</h3>
+                    <p class="text-sm text-gray-500 mt-1">3,200+ products</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 md:mb-0">Featured Products</h2>
+                
+                <!-- Filter Buttons -->
+                <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0 w-full md:w-auto">
+                    <button onclick="filterProducts('all')" class="filter-btn active px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium transition" data-filter="all">All</button>
+                    <button onclick="filterProducts('electronics')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition" data-filter="electronics">Electronics</button>
+                    <button onclick="filterProducts('textiles')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition" data-filter="textiles">Textiles</button>
+                    <button onclick="filterProducts('machinery')" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition" data-filter="machinery">Machinery</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products will be injected here by JavaScript -->
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="loadMoreProducts()" class="border-2 border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-600 hover:text-white transition">
+                    Load More Products
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Suppliers Section -->
+    <section id="suppliers" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Verified Suppliers</h2>
+            
+            <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Suppliers will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">How It Works</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-indigo-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">List Your Products</h3>
+                    <p class="text-gray-600">Suppliers create detailed listings with images, specifications, and pricing for their products.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-indigo-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Connect with Buyers</h3>
+                    <p class="text-gray-600">Buyers browse, filter, and find products that match their requirements.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold text-indigo-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Negotiate & Trade</h3>
+                    <p class="text-gray-600">Direct communication between parties to negotiate terms and close deals securely.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Expand Your Business?</h2>
+            <p class="text-xl mb-8 text-indigo-100">Join thousands of suppliers and buyers already trading on SupplyConnect. Start your journey today.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="openModal('supplierModal')" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition shadow-lg">
+                    Register as Supplier
+                </button>
+                <button onclick="scrollToSection('products')" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition">
+                    Browse Marketplace
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="factory" class="h-6 w-6 text-indigo-400 mr-2"></i>
+                        <span class="text-xl font-bold text-white">SupplyConnect</span>
+                    </div>
+                    <p class="text-sm">Connecting global suppliers with quality buyers since 2024. Your trusted B2B marketplace.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">For Buyers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">How to Buy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Product Categories</a></li>
+                        <li><a href="#" class="hover:text-white transition">Verified Suppliers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Buyer Protection</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">For Suppliers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Sell on SupplyConnect</a></li>
+                        <li><a href="#" class="hover:text-white transition">Supplier Guidelines</a></li>
+                        <li><a href="#" class="hover:text-white transition">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center"><i data-lucide="mail" class="h-4 w-4 mr-2"></i> support@supplyconnect.com</li>
+                        <li class="flex items-center"><i data-lucide="phone" class="h-4 w-4 mr-2"></i> +1 (555) 123-4567</li>
+                        <li class="flex items-center"><i data-lucide="map-pin" class="h-4 w-4 mr-2"></i> San Francisco, CA</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- FIX 4: Updated copyright year to 2025 -->
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
+                <p>&copy; 2025 SupplyConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Supplier Modal -->
+    <div id="contactModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-900">Contact Supplier</h3>
+                <button onclick="closeModal('contactModal')" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="supplierInfo" class="flex items-center mb-6 p-4 bg-gray-50 rounded-lg">
+                    <!-- Supplier info injected here -->
+                </div>
+                <!-- FIX 2: Added for/id attributes to all form labels and inputs -->
+                <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                    <div class="mb-4">
+                        <label for="contactName" class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                        <input id="contactName" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input id="contactEmail" type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contactCompany" class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                        <input id="contactCompany" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea id="contactMessage" rows="4" required placeholder="I'm interested in your products. Please provide more information..." 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Registration Modal -->
+    <div id="supplierModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-900">Become a Supplier</h3>
+                <button onclick="closeModal('supplierModal')" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <!-- FIX 2: Added for/id attributes to supplier form inputs -->
+                <form id="supplierForm" onsubmit="handleSupplierSubmit(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="supplierCompanyName" class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                            <input id="supplierCompanyName" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label for="supplierBusinessType" class="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
+                            <select id="supplierBusinessType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option>Manufacturer</option>
+                                <option>Distributor</option>
+                                <option>Wholesaler</option>
+                                <option>Exporter</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="supplierEmail" class="block text-sm font-medium text-gray-700 mb-2">Business Email</label>
+                        <input id="supplierEmail" type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                        <div class="flex flex-wrap gap-2">
+                            <label for="catElectronics" class="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                                <input id="catElectronics" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm">Electronics</span>
+                            </label>
+                            <label for="catTextiles" class="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                                <input id="catTextiles" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm">Textiles</span>
+                            </label>
+                            <label for="catMachinery" class="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                                <input id="catMachinery" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm">Machinery</span>
+                            </label>
+                            <label for="catAgriculture" class="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                                <input id="catAgriculture" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm">Agriculture</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="supplierDescription" class="block text-sm font-medium text-gray-700 mb-2">Company Description</label>
+                        <textarea id="supplierDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Submit Application
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-900">Welcome Back</h3>
+                <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <!-- FIX 2: Added for/id attributes to login form inputs -->
+                <form onsubmit="handleLogin(event)">
+                    <div class="mb-4">
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input id="loginEmail" type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div class="mb-6">
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input id="loginPassword" type="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition mb-4">
+                        Sign In
+                    </button>
+                    <p class="text-center text-sm text-gray-600">
+                        <!-- FIX 6: Added event.preventDefault() to stop page jump on anchor click -->
+                        Don't have an account? <a href="#" onclick="event.preventDefault(); closeModal('loginModal'); openModal('supplierModal')" class="text-indigo-600 hover:underline">Register</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                <h3 class="text-xl font-bold text-gray-900">Product Details</h3>
+                <button onclick="closeModal('productModal')" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div id="productDetailContent" class="p-6">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- FIX 5: Initialize Lucide icons after DOM and scripts have loaded -->
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+</html>

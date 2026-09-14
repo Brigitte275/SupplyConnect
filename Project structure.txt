@@ -1,0 +1,29 @@
+supplyconnect-backend/
+├── src/
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Product.js
+│   │   ├── Supplier.js
+│   │   ├── Category.js
+│   │   └── Message.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── products.js
+│   │   ├── suppliers.js
+│   │   ├── categories.js
+│   │   └── messages.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── productController.js
+│   │   ├── supplierController.js
+│   │   └── messageController.js
+│   ├── middleware/
+│   │   ├── auth.js
+│   │   └── validation.js
+│   ├── config/
+│   │   └── database.js
+│   └── utils/
+│       └── helpers.js
+├── server.js
+├── package.json
+└── .env
