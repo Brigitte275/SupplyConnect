@@ -21,7 +21,7 @@ const products = [
         moq: "500 kg",
         supplier: "GreenTextile Co.",
         location: "Mumbai, India",
-        image: "images/organicCottonFabric.jpg",
+        image: "images/OrganicCottonFabric.jpg",
         rating: 4.6,
         verified: true,
         description: "100% GOTS certified organic cotton fabric. Available in various weaves and weights. Sustainable and eco-friendly."
@@ -34,7 +34,7 @@ const products = [
         moq: "100 pieces",
         supplier: "SmartLiving Tech",
         location: "Guangzhou, China",
-        image: "images/smartHomeControlPanel.jpg",
+        image: "images/SmartHomeControlPanel.jpg",
         rating: 4.9,
         verified: true,
         description: "IoT-enabled smart home control hub with touchscreen interface. Compatible with major protocols including Zigbee and Z-Wave."
